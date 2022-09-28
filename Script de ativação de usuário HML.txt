@@ -1,0 +1,6 @@
+select * from usuario
+   where nm_usuario like '%rafael.menezes%';
+   
+   update usuario
+   set ie_situacao = 'A'
+   where nm_usuario like '%rafael.menezes%';
