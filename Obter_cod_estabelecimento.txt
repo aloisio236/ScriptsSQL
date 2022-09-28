@@ -1,0 +1,1 @@
+select OBTER_NOME_ESTABELECIMENTO( CD_ESTABELECIMENTO) ,cd_estabelecimento, a.* from estabelecimento a

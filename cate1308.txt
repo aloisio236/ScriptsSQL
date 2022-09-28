@@ -1,0 +1,45 @@
+Cate1308 antes da modificação
+
+select      OBTER_NOME_ESTAB(A.CD_ESTABELECIMENTO) ||' - '|| a.cd_estabelecimento "UNIDADE",
+            a.nr_atendimento "ATENDIMENTO",
+            a.dt_entrada "DT ENTRADA",
+            substr(a.nm_paciente,1,120) "PACIENTE",
+            a.nr_prontuario "PRONTUARIO",
+            elimina_caractere_especial(obter_desc_convenio(obter_convenio_atendimento(a.nr_atendimento)))"CONVENIO",
+            elimina_caractere_especial(obter_desc_agenda(b.cd_agenda)) "AGENDA",
+            elimina_caractere_especial(obter_classif_agenda_consulta(b.ie_classif_agenda)) "TIPO ATENDIMENTO",
+            elimina_caractere_especial(obter_nome_setor(obter_setor_atendimento(a.nr_atendimento))) "LOCAL ATENDIMENTO",
+            elimina_caractere_especial(A.NM_MEDICO_ATENDIMENTO) "MEDICO ATENDIMENTO",
+            elimina_caractere_especial(obter_nome_pf(c.CD_MEDICO_REFERIDO)) "MEDICO PACIENTE"
+from        atendimento_paciente_v a
+left join   agenda_consulta b on a.nr_atendimento = b.nr_atendimento
+inner join  atendimento_paciente c on a.nr_atendimento = c.nr_atendimento
+where ((A.CD_ESTABELECIMENTO = :CD_ESTABELECIMENTO) OR (A.CD_ESTABELECIMENTO is not null ))
+and a.dt_cancelamento is null   
+and a.cd_convenio in (44,221)
+and     TRUNC(A.DT_ENTRADA) BETWEEN :DT_INICIAL AND :DT_FINAL
+order by 1,3 asc
+
+----------------------------------------------------------------------------------------------------------------------
+Código depois da alteração, tirando o "TIPO ATENDIMENTO" e colocando o "Classificacao de atendimento"
+select      OBTER_NOME_ESTAB(A.CD_ESTABELECIMENTO) ||' - '|| a.cd_estabelecimento "UNIDADE",
+            a.nr_atendimento "ATENDIMENTO",
+            a.dt_entrada "DT ENTRADA",
+            substr(a.nm_paciente,1,120) "PACIENTE",
+            a.nr_prontuario "PRONTUARIO",
+--          a.NR_SEQ_CLASSIFICACAO "Classificação de atendimento",
+            elimina_caractere_especial(Obter_Classificacao_Atend (a.nr_atendimento,'D'))"Classificacao de atendimento",
+--          elimina_caractere_especial(obter_classif_agenda_consulta(b.ie_classif_agenda)) "TIPO ATENDIMENTO",
+            elimina_caractere_especial(obter_desc_convenio(obter_convenio_atendimento(a.nr_atendimento)))"CONVENIO",
+            elimina_caractere_especial(obter_desc_agenda(b.cd_agenda)) "AGENDA",            
+            elimina_caractere_especial(obter_nome_setor(obter_setor_atendimento(a.nr_atendimento))) "LOCAL ATENDIMENTO",
+            elimina_caractere_especial(A.NM_MEDICO_ATENDIMENTO) "MEDICO ATENDIMENTO",
+            elimina_caractere_especial(obter_nome_pf(c.CD_MEDICO_REFERIDO)) "MEDICO PACIENTE"
+from        atendimento_paciente_v a
+left join   agenda_consulta b on a.nr_atendimento = b.nr_atendimento
+inner join  atendimento_paciente c on a.nr_atendimento = c.nr_atendimento
+where ((A.CD_ESTABELECIMENTO = :CD_ESTABELECIMENTO) OR (A.CD_ESTABELECIMENTO is not null ))
+and a.dt_cancelamento is null   
+and a.cd_convenio in (44,221)
+and     TRUNC(A.DT_ENTRADA) BETWEEN :DT_INICIAL AND :DT_FINAL
+order by 1,3 asc

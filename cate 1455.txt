@@ -1,0 +1,74 @@
+atendiemento 151882
+wate70100 relatório Philips
+cate 1453 homol
+
+Script: select obter_nome_pf(:cd_medico_resp) nm_pessoa_fisica from dual
+Tabela: ATENDIMENTO_PACIENTE
+Visão: 26792
+Código: 700801
+Tipo de Atributo: VA
+
+Cate 1455 relatório em produção
+
+Banda sem o valor da consulta
+
+Dados do atendimento 1
+
+select    ('  ' || to_char(a.dt_entrada, 'dd/mm/yyyy')) dt_entrada,
+    ('  ' || lpad(a.cd_procedimento,8,0)) cd_procedimento,
+    ('  ' || a.cd_edicao_amb) cd_edicao,
+    '           ' || nvl(d.ie_tipo_consulta, c.ie_tipo_consulta) ds_tipo_consulta,
+
+--      a.vl_procedimento vl_procedimento
+        a.cd_procedimento cd_procedimento
+
+from    w_tiss_proc_paciente a,
+        w_tiss_guia b,
+        tiss_conta_atend d,
+        atendimento_paciente c
+where    a.nr_seq_guia         = b.nr_sequencia
+and    c.nr_atendimento        = d.nr_atendimento
+and    d.nr_interno_conta      = b.nr_interno_conta
+and    b.nr_sequencia          = :nr_sequencia
+
+Banda com o nome do médico atendente
+
+select	
+
+  obter_nome_medico   ( ap.cd_medico_resp, 'nc') nm_medico_solicitante,
+
+   obter_conselho_medico_format(ap.cd_medico_resp) sg_conselho,
+
+   obter_crm_medico (ap.cd_medico_resp) nr_crm,
+
+   obter_uf_crm_medico (ap.cd_medico_resp) uf_crm,
+
+   pls_obter_cbo_medico  (ap.cd_medico_resp) cd_cbo_saude 
+   
+from	w_tiss_contratado_exec a,
+	w_tiss_guia b ,
+   atendimento_paciente ap
+where	a.nr_seq_guia	= :nr_sequencia
+and	a.nr_seq_guia	= b.nr_sequencia
+and b.nr_atendimento = ap.nr_atendimento
+and	somente_numero(nvl(b.ds_versao,'3.02.02')) <= 30202
+union
+select	
+
+  obter_nome_medico   ( ap.cd_medico_resp, 'nc') nm_medico_solicitante,
+
+   obter_conselho_medico_format(ap.cd_medico_resp) sg_conselho,
+
+   obter_crm_medico (ap.cd_medico_resp) nr_crm,
+
+   obter_uf_crm_medico (ap.cd_medico_resp) uf_crm,
+
+   pls_obter_cbo_medico  (ap.cd_medico_resp) cd_cbo_saude 
+
+from	w_tiss_contratado_exec a,
+	w_tiss_guia b,
+   atendimento_paciente ap
+where	a.nr_seq_guia	= :nr_sequencia
+and	a.nr_seq_guia	= b.nr_sequencia
+and b.nr_atendimento = ap.nr_atendimento
+and	somente_numero(nvl(b.ds_versao,'3.02.02')) >= 30300
